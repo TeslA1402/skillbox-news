@@ -1,3 +1,15 @@
 spring:
   application:
     name: skillbox-news
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news
+    username: local_user
+    password: local_password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

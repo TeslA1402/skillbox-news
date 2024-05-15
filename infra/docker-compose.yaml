@@ -1,0 +1,10 @@
+version: '3'
+services:
+  postgres-skillbox-news:
+    image: postgres:16.2
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=local_user
+      - POSTGRES_PASSWORD=local_password
+      - POSTGRES_DB=news
