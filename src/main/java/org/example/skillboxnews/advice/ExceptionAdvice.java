@@ -6,6 +6,7 @@ import org.example.skillboxnews.exception.BadRequestException;
 import org.example.skillboxnews.exception.ForbiddenException;
 import org.example.skillboxnews.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -57,6 +58,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(ForbiddenException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorDescription forbidden(ForbiddenException e) {
+        return new ErrorDescription(e);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorDescription accessDenied(AccessDeniedException e) {
         return new ErrorDescription(e);
     }
 

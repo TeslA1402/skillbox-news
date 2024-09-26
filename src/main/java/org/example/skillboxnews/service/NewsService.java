@@ -23,8 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class NewsService {
     private final NewsRepository newsRepository;
     private final NewsMapper newsMapper;
-    private final UserService userService;
     private final CategoryRepository categoryRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public Page<NewsResponse> findAll(Pageable pageable, NewsFilter newsFilter) {
@@ -33,10 +33,10 @@ public class NewsService {
     }
 
     @Transactional
-    public NewsResponse save(NewsRequest newsRequest, String token) {
+    public NewsResponse save(NewsRequest newsRequest, String userName) {
         log.info("Request to save News: {}", newsRequest);
-        User user = userService.getByToken(token);
         Category category = categoryRepository.findById(newsRequest.categoryId()).orElseThrow(() -> new NotFoundException("Category not found"));
+        User user = userService.getUserByLogin(userName);
         News news = newsRepository.save(newsMapper.toNews(newsRequest, user, category));
         return newsMapper.toNewsResponse(news);
     }

@@ -24,10 +24,10 @@ public class CommentService {
     private final UserService userService;
 
     @Transactional
-    public CommentResponse saveComment(Long newsId, CommentRequest commentRequest, String token) {
+    public CommentResponse saveComment(Long newsId, CommentRequest commentRequest, String userName) {
         log.info("Saving comment {} to news with id {}", commentRequest, newsId);
-        User user = userService.getByToken(token);
         News news = getNewsById(newsId);
+        User user = userService.getUserByLogin(userName);
         Comment comment = commentRepository.save(commentMapper.toComment(commentRequest, user, news));
         return commentMapper.toCommentResponse(comment);
     }

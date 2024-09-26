@@ -6,9 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.example.skillboxnews.exception.BadRequestException;
 import org.example.skillboxnews.exception.ForbiddenException;
+import org.example.skillboxnews.security.AppUserPrincipal;
 import org.example.skillboxnews.service.CheckAccessService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,14 +24,6 @@ import java.util.Map;
 @Slf4j
 public class CheckAccessAspect {
     private final CheckAccessService checkAccessService;
-
-    private static String getToken(HttpServletRequest request) {
-        String token = request.getHeader("Token");
-        if (token == null) {
-            throw new BadRequestException("Required request header 'Token' for method parameter type String is not present");
-        }
-        return token;
-    }
 
     private static Long getId(HttpServletRequest request) {
         Map<String, String> attribute = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
@@ -50,6 +43,10 @@ public class CheckAccessAspect {
         return id;
     }
 
+    private static AppUserPrincipal getPrincipal() {
+        return (AppUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     @Before("@annotation(checkAccess)")
     public void checkAccess(final JoinPoint joinPoint, final CheckAccess checkAccess) {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
@@ -60,8 +57,8 @@ public class CheckAccessAspect {
 
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         Long id = getId(request);
-        String token = getToken(request);
-        if (!checkAccessService.accessible(checkAccess.entityType(), id, token)) {
+        AppUserPrincipal principal = getPrincipal();
+        if (!checkAccessService.accessible(checkAccess, id, principal)) {
             throw new ForbiddenException("Access denied");
         }
     }

@@ -18,6 +18,7 @@ public interface CommentMapper {
     @Mapping(source = "news", target = "news")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "user", source = "user")
     Comment toComment(CommentRequest commentRequest, User user, News news);
 
     @Mapping(source = "news.id", target = "newsId")

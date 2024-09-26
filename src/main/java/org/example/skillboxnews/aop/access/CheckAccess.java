@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface CheckAccess {
     EntityType entityType();
+
+    Action action() default Action.NONE;
 }
