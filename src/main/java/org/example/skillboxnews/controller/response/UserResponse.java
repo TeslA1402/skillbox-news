@@ -1,4 +1,8 @@
 package org.example.skillboxnews.controller.response;
 
-public record UserResponse(Long id, String login) {
+import org.example.skillboxnews.entity.RoleType;
+
+import java.util.List;
+
+public record UserResponse(Long id, String login, List<RoleType> roles) {
 }
